@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Grade Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-lg p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Student Grade Portal</h1>
+            <p class="text-gray-500 mt-2">Select a subject and enter your Student ID to view your grade.</p>
+        </div>
+
+        <form id="gradeForm" class="space-y-6">
+            <div>
+                <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                <select id="subject" name="subject" class="block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+                    <option value="mil">Media and Information Literacy</option>
+                    <option value="cp2">Computer Programming 2</option>
+                    <option value="cp4">Computer Programming 4</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="studentId" class="block text-sm font-medium text-gray-700 mb-2">Student ID</label>
+                <input type="text" id="studentId" name="studentId" placeholder="e.g., 2000436880" class="block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+            </div>
+
+            <div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform transform hover:scale-105 shadow-md">
+                    Check Grade
+                </button>
+            </div>
+        </form>
+
+        <div id="result" class="mt-8 p-6 rounded-lg bg-gray-50 hidden">
+            <!-- Grade information will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Data for student grades
+        const grades = {
+            'mil': {
+                '2000436880': { name: 'BAJO, CHRISTINE JHOY BARRO', grade: 90 },
+                '2000445286': { name: 'BAJO, MA. ALYSSA LORRAINE ROQUE', grade: 92 },
+                '2000448623': { name: 'BORCELAS, DIVINE SHANE ARANGCO', grade: 87 },
+                '2000456707': { name: 'CAÑADILLA, RICA AROJADO', grade: 91 },
+                '2000441544': { name: 'CERA, DANICA MAE RETORBAR', grade: 92 },
+                '2000459483': { name: 'DACILLO, ZIDANE GLEAN MARTINEZ', grade: 90 },
+                '2000455206': { name: 'DEL CASTILLO, DENISE OSALVO', grade: 92 },
+                '2000447022': { name: 'GARADO, YUI VALENTINE SASIS', grade: 90 },
+                '2000458620': { name: 'GO, ANGEL RANULO', grade: 88 },
+                '2000446954': { name: 'HERAS, ROSEMARIE CRUZ', grade: 90 },
+                '2000438701': { name: 'MARCILLA, PRINCESS SALIA CONSTANTINO', grade: 88 },
+                '2000448733': { name: 'SANALILA, LADY ALLIYAH PAGHUBASAN', grade: 89 },
+                '2000450822': { name: 'VITUG, JHAY DENZ RAYVER FRANCISCO', grade: 92 },
+                '2000448554': { name: 'AQUINO, ALCHELER BACE', grade: 89 },
+                '2000464263': { name: 'BONDOC, JENRIEL ARIANE PANORINGAN', grade: 70 },
+                '2000467879': { name: 'CASTILLO, JEFFERSON YGOT', grade: 60 },
+                '2000465159': { name: 'CASTRO, RIHANNA COLLADO', grade: 87 },
+                '2000446555': { name: 'DATO-ON, TOBY ANDREW ECONAR', grade: 85 },
+                '2000459481': { name: 'FAILANO, ELEIZE JAMEI PEÑALOSA', grade: 91 },
+                '2000454978': { name: 'GINAGA, CHRISTINABEL RAMIREZ', grade: 78 },
+                '2000474288': { name: 'OCO, GRACE ANNE CAMUS', grade: 91 },
+                '2000465629': { name: 'PIOPONGCO, ATAZSHA MHACELZ TAGULAO', grade: 88 },
+                '2000449404': { name: 'SEGUNDO, ANDREI LOZANO', grade: 87 },
+                '2000465070': { name: 'VICARIO, KING ZAIJAN MASAYON', grade: 89 },
+                '2000444701': { name: 'ABO ABO, REZIAH AYOK', grade: 89 },
+                '2000462098': { name: 'BANSALAO, NICOLE OLING', grade: 93 },
+                '2000452086': { name: 'BONIFACIO, LEIAN GABRIEL NATIVIDAD', grade: 93 },
+                '2000444660': { name: 'CABALQUINTO, AIZELLE GEM ALICANTE', grade: 94 },
+                '2000473876': { name: 'CUFFEE, MARK MELVIN JAY BEDUYA', grade: 82 },
+                '2000450290': { name: 'DELA CRUZ, DANIEL JOSHUA DE GUZMAN', grade: 89 },
+                '2000448463': { name: 'DELFIN, SOPHIA NICOLE RAMIREZ', grade: 75 },
+                '2000449059': { name: 'DELIMA, ALEAH NICE CARPENTERO', grade: 94 },
+                '2000440015': { name: 'ENDEGADO, JUDY LEANNE ZABALA', grade: 95 },
+                '2000469449': { name: 'ENDO, TAITOKU CORDERO', grade: 75 },
+                '2000452572': { name: 'FABRAQUEL, RHUVIE ANN VILLANUEVA', grade: 92 },
+                '2000441668': { name: 'FLORES, JEMALYN LANON', grade: 87 },
+                '2000447814': { name: 'GARCIA, TIFFANY ROZE', grade: 86 },
+                '2000458448': { name: 'HERNANDEZ, CRISEA PAULINE QUIATCHON', grade: 89 },
+                '2000466187': { name: 'LAMBINO, KRIS JONAS BATAG', grade: 87 },
+                '2000451770': { name: 'LLADOC, RAVEN KAI CALIXTO', grade: 77 },
+                '2000444791': { name: 'MANOOK, CHRISTY LYN TIMBAL', grade: 86 },
+                '2000465117': { name: 'MONDOÑEDO, RHIAN VIDANES', grade: 87 },
+                '2000456425': { name: 'PEDIDO, EMMANUEL', grade: 94 },
+                '2000446599': { name: 'SEGALA, CARLO REINE', grade: 60 },
+                '2000440660': { name: 'TEJADA, REZLINE NAYSAY', grade: 91 },
+                '2000452385': { name: 'ABOG, SHAINA MOHAME TANO', grade: 89 },
+                '200045842': { name: 'ALIPAR, ZYRELL OWEN COMPANIADOS', grade: 87 },
+                '2000443918': { name: 'ANDRADE, ADRIELLE CLYDE DIAZ', grade: 75 },
+                '2000452850': { name: 'ARBOLEDA, JOSE MIGUEL AGUILAR', grade: 89 },
+                '2000453413': { name: 'BALAJADIA, PAULA ALYNA GUATERO', grade: 85 },
+                '2000453425': { name: 'BALAJADIA, PAULETTE ALTHEA GUATERO', grade: 86 },
+                '200045430': { name: 'BELEN, DANNIELLE ALEXA BALANE', grade: 95 },
+                '2000450514': { name: 'BELINARIO, SAMANTHA CLAIRE IGAT', grade: 93 },
+                '2000455685': { name: 'BORAS, THRISTAN BUSOG', grade: 82 },
+                '2000459800': { name: 'BUENAVENTURA, TOBEY MAXIM VIGONTE', grade: 82 },
+                '2000451927': { name: 'CAMBA, CHARLENE NICOLE SANTOS', grade: 88 },
+                '2000467554': { name: 'CANALES, RAFAEL CARLO PASILON', grade: 84 },
+                '2000449427': { name: 'CAPILLAN, DAVID CARLO PRINCIPE', grade: 92 },
+                '2000458426': { name: 'CASTRO, LOUIE DANIEL MASULA', grade: 88 },
+                '2000464286': { name: 'CAÑAVERAL, KYLE RAILEY BAJAS', grade: 88 },
+                '2000440884': { name: 'DAVID, CHARLIE SANTINO MARTIZON', grade: 86 },
+                '2000456844': { name: 'DELA PEÑA, PHILIP RAIN YBANEZ', grade: 84 },
+                '2000466815': { name: 'DELOS REYES, JOAQUIN ALEC FERNANDEZ', grade: 90 },
+                '2000447021': { name: 'GREFIEL, MORNING ANGEL OROLFO', grade: 92 },
+                '2000447063': { name: 'LACHICA, LANCE LOPEZ', grade: 91 },
+                '2000464625': { name: 'LADERAS, GIOBER MONLEON', grade: 76 },
+                '2000452061': { name: 'LAZARO, CHARLES DOMINIC SAN ANDRES', grade: 83 },
+                '2000448535': { name: 'LUCHING, CRISTELLE MAE ESPIRITU', grade: 94 },
+                '2000461520': { name: 'MALIMBAN, CHARLES ANTHONY DANGARAN', grade: 86 },
+                '2000457174': { name: 'MEDINA, JOHN ANDREI MARTINEZ', grade: 75 },
+                '2000469258': { name: 'MELMIDA, ANGEL JEWEL MUSA', grade: 78 },
+                '2000455249': { name: 'MILITANTE, ZEAN ADRICK DANIEL NATE', grade: 89 },
+                '2000466182': { name: 'MILLABAS, SEIFER GREI RAMIREZ', grade: 92 },
+                '200045853': { name: 'NAKPIL, JANN ARWEN CRUZ', grade: 90 },
+                '2000451584': { name: 'NATIVIDAD, SHAWN JARED BALASA', grade: 89 },
+                '2000472908': { name: 'PALOMA, JIA CABRERA', grade: 90 },
+                '2000454148': { name: 'PANERGO, JASON MEDRANO', grade: 91 },
+                '2000457383': { name: 'QUINTERO, PRINCE KURT RECTO', grade: 91 },
+                '2000438525': { name: 'REJALDE, LLOYD JEREMIAH FRIAS', grade: 94 },
+                '2000457182': { name: 'RUANTO, ALPHONSE MIGUEL LLANZANA', grade: 88 },
+                '2000438664': { name: 'SALAZAR, RENZEL LOUISE BACOLOD', grade: 91 },
+                '2000438217': { name: 'SEPIDA, JOHN SEBASTIAN RUIZ', grade: 91 },
+                '2000457263': { name: 'TAN, CHRISTIAN MARC ANIBAN', grade: 76 },
+                '2000465134': { name: 'TORRAL, AUDREI MONIQUE MARCELINO', grade: 93 },
+                '200046638': { name: 'YAP, ARCHDUKE O\'NEAL REBLANDO', grade: 93 },
+                '2000377981': { name: 'ZAMORA, LUIS MIGUEL JANDONI', grade: 75 }
+            },
+            'cp2': {
+                '2000452385': { name: 'ABOG, SHAINA MOHAME TANO', grade: 94 },
+                '200045842': { name: 'ALIPAR, ZYRELL OWEN COMPANIADOS', grade: 92 },
+                '2000443918': { name: 'ANDRADE, ADRIELLE CLYDE DIAZ', grade: 91 },
+                '2000452850': { name: 'ARBOLEDA, JOSE MIGUEL AGUILAR', grade: 93 },
+                '2000453413': { name: 'BALAJADIA, PAULA ALYNA GUATERO', grade: 87 },
+                '2000453425': { name: 'BALAJADIA, PAULETTE ALTHEA GUATERO', grade: 92 },
+                '200045430': { name: 'BELEN, DANNIELLE ALEXA BALANE', grade: 99 },
+                '2000450514': { name: 'BELINARIO, SAMANTHA CLAIRE IGAT', grade: 95 },
+                '2000455685': { name: 'BORAS, THRISTAN BUSOG', grade: 85 },
+                '2000459800': { name: 'BUENAVENTURA, TOBEY MAXIM VIGONTE', grade: 91 },
+                '2000451927': { name: 'CAMBA, CHARLENE NICOLE SANTOS', grade: 96 },
+                '2000467554': { name: 'CANALES, RAFAEL CARLO PASILON', grade: 91 },
+                '2000449427': { name: 'CAPILLAN, DAVID CARLO PRINCIPE', grade: 95 },
+                '2000458426': { name: 'CASTRO, LOUIE DANIEL MASULA', grade: 94 },
+                '2000464286': { name: 'CAÑAVERAL, KYLE RAILEY BAJAS', grade: 93 },
+                '2000440884': { name: 'DAVID, CHARLIE SANTINO MARTIZON', grade: 92 },
+                '2000456844': { name: 'DELA PEÑA, PHILIP RAIN YBANEZ', grade: 82 },
+                '2000466815': { name: 'DELOS REYES, JOAQUIN ALEC FERNANDEZ', grade: 93 },
+                '2000447021': { name: 'GREFIEL, MORNING ANGEL OROLFO', grade: 95 },
+                '2000447063': { name: 'LACHICA, LANCE LOPEZ', grade: 97 },
+                '2000464625': { name: 'LADERAS, GIOBER MONLEON', grade: 95 },
+                '2000452061': { name: 'LAZARO, CHARLES DOMINIC SAN ANDRES', grade: 90 },
+                '2000448535': { name: 'LUCHING, CRISTELLE MAE ESPIRITU', grade: 97 },
+                '2000461520': { name: 'MALIMBAN, CHARLES ANTHONY DANGARAN', grade: 93 },
+                '2000457174': { name: 'MEDINA, JOHN ANDREI MARTINEZ', grade: 76 },
+                '2000469258': { name: 'MELMIDA, ANGEL JEWEL MUSA', grade: 95 },
+                '2000455249': { name: 'MILITANTE, ZEAN ADRICK DANIEL NATE', grade: 96 },
+                '2000466182': { name: 'MILLABAS, SEIFER GREI RAMIREZ', grade: 96 },
+                '200045853': { name: 'NAKPIL, JANN ARWEN CRUZ', grade: 94 },
+                '2000451584': { name: 'NATIVIDAD, SHAWN JARED BALASA', grade: 89 },
+                '2000472908': { name: 'PALOMA, JIA CABRERA', grade: 85 },
+                '2000454148': { name: 'PANERGO, JASON MEDRANO', grade: 97 },
+                '2000457383': { name: 'QUINTERO, PRINCE KURT RECTO', grade: 92 },
+                '2000438525': { name: 'REJALDE, LLOYD JEREMIAH FRIAS', grade: 96 },
+                '2000457182': { name: 'RUANTO, ALPHONSE MIGUEL LLANZANA', grade: 96 },
+                '2000438664': { name: 'SALAZAR, RENZEL LOUISE BACOLOD', grade: 97 },
+                '2000438217': { name: 'SEPIDA, JOHN SEBASTIAN RUIZ', grade: 96 },
+                '2000457263': { name: 'TAN, CHRISTIAN MARC ANIBAN', grade: 76 },
+                '2000465134': { name: 'TORRAL, AUDREI MONIQUE MARCELINO', grade: 95 },
+                '200046638': { name: 'YAP, ARCHDUKE O\'NEAL REBLANDO', grade: 90 },
+                '2000377981': { name: 'ZAMORA, LUIS MIGUEL JANDONI', grade: 97 }
+            },
+            'cp4': {
+                '2000423879': { name: 'ACANTO, ELLEA MARIE VILLAMOR', grade: 98 },
+                '2000391818': { name: 'ALASA-AS III, DENISON SEÑGA', grade: 94 },
+                '2000394345': { name: 'AZARCON, RAINE JOSEPH NICOLAS', grade: 94 },
+                '2000398753': { name: 'BANTAYAN, CLARENCE KENT PALOMA', grade: 92 },
+                '2000387254': { name: 'BECHAYDA, SAMUEL DAVID BAUTISTA', grade: 96 },
+                '2000382677': { name: 'BORBE, ALECKSANDRA TAN', grade: 97 },
+                '2000391127': { name: 'BRIONES, NADINE ARCO', grade: 90 },
+                '2000427221': { name: 'CALINGASAN, SAMUEL CARLO CHAVEZ', grade: 82 },
+                '2000397624': { name: 'CAMINADE, PRINCE ARMAND AMBOLODTO', grade: 89 },
+                '2000394400': { name: 'CAÑO, JOHNRIEL CUIZON', grade: 94 },
+                '2000386363': { name: 'DE LA PEÑA, RHAYA NICOLE ENDAYA', grade: 97 },
+                '2000400123': { name: 'DEL ROSARIO, ADRIAN CAINAG', grade: 96 },
+                '2000421575': { name: 'DUKA, JULIO MIGUEL ALBACARO', grade: 95 },
+                '2000389243': { name: 'ENRIQUE, BHORHIZ ZABALA', grade: 83 },
+                '2000421045': { name: 'ERAYA, MARIBEL ODRON', grade: 93 },
+                '2000401856': { name: 'EVANGELISTA, SEVEN XANDER LAURETA', grade: 96 },
+                '2000382089': { name: 'FRANCISCO, JENRICK ROBLES', grade: 89 },
+                '2000388314': { name: 'LAZAR, ASHLANT JIMENEZ', grade: 96 },
+                '2000389665': { name: 'LEONARDO, AVALEEN MANZANO', grade: 95 },
+                '2000380722': { name: 'LOBERIANO, NAZARENE ROMERO', grade: 96 },
+                '2000413072': { name: 'MELCHOR, JARREN HENRICK LAURENIO', grade: 97 },
+                '2000391013': { name: 'MIJARES, RUI JAYNO LORICO', grade: 97 },
+                '2000423908': { name: 'MIRANDA, ZAIRUS NATHAN', grade: 75 },
+                '2000421177': { name: 'MONDEÑEDO, JARED VIDANES', grade: 93 },
+                '2000404772': { name: 'ORINGO, EILEEN ECARUAN', grade: 76 },
+                '2000397237': { name: 'PACANOR, PRINCE MARC EDWARD ALABASO', grade: 96 },
+                '2000399075': { name: 'PACIFICAR, EUNICE VALENZUELA', grade: 97 },
+                '2000381455': { name: 'PAELDEN, GIAN CARLO LAPUZ', grade: 96 },
+                '2000410531': { name: 'RAMOTA, VINCENT PAUL ACIO', grade: 97 },
+                '2000418337': { name: 'SEE, PATRICK SAYTONO', grade: 75 },
+                '2000390563': { name: 'STREBEL, GABRIEL RIANE MAGBANUA', grade: 97 },
+                '2000398835': { name: 'TOROT, LEE IVAN RAMOS', grade: 94 },
+                '2000402476': { name: 'VILLANUEVA, ALDRIN JOHN', grade: 95 },
+                '2000384859': { name: 'BARDELOZA, TRAVIS LOSANTAS', grade: 89 },
+                '2000394176': { name: 'CAHILIG, AUDREY JAMES HOSMILLO', grade: 89 },
+                '2000384135': { name: 'CERBA, BHEA BARBA', grade: 96 },
+                '2000397234': { name: 'CONCORDIA, AR JAY ARCEO', grade: 87 },
+                '2000392119': { name: 'DELA CRUZ, AERO BANDAYRIL', grade: 80 },
+                '2000427809': { name: 'DELIMA, JOAQUINE FELIX AQUINO', grade: 89 },
+                '2000383800': { name: 'DY, GABRIELLE DIZON', grade: 98 },
+                '2000415985': { name: 'ESPAÑA, ELIJAH DELA PIEDRA', grade: 92 },
+                '2000397725': { name: 'REYES, JOHN HERO MANUNGAY', grade: 96 },
+                '2000430607': { name: 'TUMBALE, MHERIE JONIS VIZARRA', grade: 96 }
+            }
+        };
+
+        const gradeForm = document.getElementById('gradeForm');
+        const resultDiv = document.getElementById('result');
+
+        gradeForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent page reload
+
+            const subject = document.getElementById('subject').value;
+            const studentId = document.getElementById('studentId').value.trim();
+
+            resultDiv.classList.remove('hidden'); // Show the result box
+
+            if (!studentId) {
+                showResult('Please enter a Student ID.', 'error');
+                return;
+            }
+
+            const subjectGrades = grades[subject];
+            const studentData = subjectGrades ? subjectGrades[studentId] : undefined;
+
+            if (studentData) {
+                const gradeColor = getGradeColor(studentData.grade);
+                const content = `
+                    <h3 class="text-lg font-semibold text-gray-800">${studentData.name}</h3>
+                    <p class="text-gray-600">Student ID: ${studentId}</p>
+                    <div class="mt-4 text-center">
+                        <p class="text-gray-500 text-sm">Your Grade is</p>
+                        <p class="text-6xl font-bold ${gradeColor}">${studentData.grade}</p>
+                    </div>
+                `;
+                showResult(content, 'success');
+            } else {
+                const content = `
+                    <h3 class="text-lg font-semibold text-red-800">Student Not Found</h3>
+                    <p class="text-red-600">No record found for Student ID: <strong>${studentId}</strong> in this subject. Please check the ID and selected subject and try again.</p>
+                `;
+                showResult(content, 'error');
+            }
+        });
+        
+        function showResult(htmlContent, type) {
+            resultDiv.innerHTML = htmlContent;
+            if (type === 'error') {
+                resultDiv.classList.add('bg-red-100', 'border', 'border-red-200');
+                resultDiv.classList.remove('bg-green-100', 'border-green-200', 'bg-gray-50');
+            } else {
+                 resultDiv.classList.add('bg-green-100', 'border', 'border-green-200');
+                 resultDiv.classList.remove('bg-red-100', 'border-red-200', 'bg-gray-50');
+            }
+        }
+        
+        function getGradeColor(grade) {
+            if (grade >= 90) return 'text-green-600';
+            if (grade >= 75) return 'text-blue-600';
+            if (grade >= 60) return 'text-yellow-600';
+            return 'text-red-600';
+        }
+
+    </script>
+</body>
+</html>
+
+
